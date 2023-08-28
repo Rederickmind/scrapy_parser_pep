@@ -13,6 +13,7 @@ class PepSpider(scrapy.Spider):
         all_peps = table.css('tbody')
         all_peps_links = all_peps.css('a::attr(href)').getall()
         for pep_link in all_peps_links:
+            pep_link = pep_link + '/'
             yield response.follow(pep_link, callback=self.parse_pep)
 
     def parse_pep(self, response):
@@ -29,5 +30,4 @@ class PepSpider(scrapy.Spider):
             'name': name,
             'status': pep_status
         }
-        print(pep_data)
         yield PepParseItem(pep_data)
