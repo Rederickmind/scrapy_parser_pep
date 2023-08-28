@@ -17,8 +17,12 @@ python -m venv venv
 source venv/Scripts/activate
 ```
 **Обновите менеджер pip и установите зависимости**
+```
 python -m pip install --upgrade pip
+```
+```
 pip install -r requirements.txt
+```
 
 **Для запуска парсера введите команду в терминал:**
 ```
@@ -31,5 +35,4 @@ scrapy crawl pep
 - Фреймворк Scrapy 2.5.1
 
 ### Автор проекта:
-
 Никита Лёвушкин, когорта ЯП 19+
