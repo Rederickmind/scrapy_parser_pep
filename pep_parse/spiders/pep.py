@@ -1,5 +1,7 @@
 import scrapy
 
+from pep_parse.items import PepParseItem
+
 
 class PepSpider(scrapy.Spider):
     name = 'pep'
@@ -7,4 +9,28 @@ class PepSpider(scrapy.Spider):
     start_urls = ['https://peps.python.org/']
 
     def parse(self, response):
-        pass
+        table = response.css('section.numerical-index')
+        all_peps = table.css('tbody')
+        all_peps_links = all_peps.css('a[href^="pep-"]')
+        for pep_link in all_peps_links:
+            pep_link = pep_link + '/'
+            yield response.follow(pep_link, callback=self.parse_pep)
+
+    def parse_pep(self, response):
+        pep_info = response.css('section.pep-content')
+        number, name = (
+            pep_info.css(
+                'h1.page-title::text'
+            ).get().split(' – ', 1)
+        )
+        pep_status = pep_info.css(
+            'dt:contains("Status") + dd::text'
+        ).get()
+
+        pep_data = {
+            'number': number.split()[1],
+            'name': name,
+            'status': pep_status
+        }
+
+        yield PepParseItem(pep_data)
